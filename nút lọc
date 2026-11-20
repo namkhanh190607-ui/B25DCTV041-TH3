@@ -1,0 +1,24 @@
+import React, { Component } from "react";
+
+const FILTERS = ["Tất cả", "Ăn uống", "Đi lại", "Học tập", "Giải trí"];
+
+export default class FilterBarA extends Component {
+  render() {
+    const { selectedCategory, onSelectCategory } = this.props;
+    return (
+      <div className="filter-bar">
+        <div className="filter-buttons">
+          {FILTERS.map((cat) => (
+            <button
+              key={cat}
+              className={selectedCategory === cat ? "filter-btn active" : "filter-btn"}
+              onClick={() => onSelectCategory(cat)}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+}
