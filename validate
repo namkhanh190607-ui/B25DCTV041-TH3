@@ -1,0 +1,108 @@
+import React, { Component } from "react";
+
+const CATEGORIES = ["Ăn uống", "Đi lại", "Học tập", "Giải trí"];
+
+export default class ExpenseFormA extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      title: "",
+      amount: "",
+      category: "Ăn uống",
+      date: new Date().toISOString().split("T")[0],
+      errors: {},
+    };
+  }
+
+  validate = () => {
+    const errors = {};
+    if (!this.state.title.trim()) {
+      errors.title = "Vui lòng nhập nội dung chi.";
+    }
+    if (!this.state.amount || Number(this.state.amount) <= 0) {
+      errors.amount = "Số tiền phải lớn hơn 0.";
+    }
+    if (!this.state.date) {
+      errors.date = "Vui lòng chọn ngày chi.";
+    }
+    this.setState({ errors });
+    return Object.keys(errors).length === 0;
+  };
+
+  handleSubmit = (e) => {
+    e.preventDefault();
+    if (!this.validate()) return;
+
+    this.props.onAddExpense({
+      id: Date.now().toString(),
+      title: this.state.title.trim(),
+      amount: Number(this.state.amount),
+      category: this.state.category,
+      date: this.state.date,
+    });
+
+    this.setState({
+      title: "",
+      amount: "",
+      category: "Ăn uống",
+      date: new Date().toISOString().split("T")[0],
+      errors: {},
+    });
+  };
+
+  render() {
+    const { title, amount, category, date, errors } = this.state;
+    return (
+      <div className="card">
+        <h2>Thêm khoản chi mới</h2>
+        <form className="expense-form" onSubmit={this.handleSubmit} noValidate>
+          <div className="form-field">
+            <input
+              type="text"
+              placeholder="Nội dung chi (vd: Ăn trưa)..."
+              value={title}
+              onChange={(e) => this.setState({ title: e.target.value })}
+            />
+            {errors.title && <span className="error-text">{errors.title}</span>}
+          </div>
+
+          <div className="form-field">
+            <input
+              type="number"
+              placeholder="Số tiền (VNĐ)"
+              value={amount}
+              onChange={(e) => this.setState({ amount: e.target.value })}
+            />
+            {errors.amount && <span className="error-text">{errors.amount}</span>}
+          </div>
+
+          <div className="form-field">
+            <select
+              value={category}
+              onChange={(e) => this.setState({ category: e.target.value })}
+            >
+              {CATEGORIES.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-field">
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => this.setState({ date: e.target.value })}
+            />
+            {errors.date && <span className="error-text">{errors.date}</span>}
+          </div>
+
+          <button type="submit" className="btn btn-primary">
+            + Thêm
+          </button>
+        </form>
+      </div>
+    );
+  }
+}
